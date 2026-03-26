@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OMG Booth — Snappic Prompt Catalog</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --card: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #ff3d6b;
+    --accent2: #00d4ff;
+    --gold: #ffc94a;
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+    --prompt-bg: #0f0f18;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #0d0d16 0%, #1a0a20 50%, #0a0d1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 48px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .header-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .logo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .logo-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .logo-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    line-height: 1;
+  }
+  .logo-title span { color: var(--accent); }
+
+  .header-stats {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--accent2);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* ── SEARCH + FILTER ── */
+  .controls {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 48px;
+    position: sticky;
+    top: 113px;
+    z-index: 99;
+  }
+  .controls-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 240px;
+  }
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 14px;
+  }
+  input[type="search"] {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px 10px 40px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="search"]:focus { border-color: var(--accent2); }
+  input[type="search"]::placeholder { color: var(--muted); }
+
+  .filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 7px 16px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .filter-btn.active-blue {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    color: #000;
+  }
+
+  #result-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ── GRID ── */
+  .grid-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 32px 48px 80px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent2);
+    box-shadow: 0 12px 40px rgba(0,212,255,0.12);
+  }
+  .card.hidden { display: none; }
+
+  .card-img-wrap {
+    position: relative;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    display: block;
+  }
+  .card:hover .card-img-wrap img { transform: scale(1.05); }
+
+  .card-img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 32px;
+  }
+  .card-img-placeholder span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .card-price-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gold);
+  }
+
+  .card-category-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .card-body {
+    padding: 16px 18px 14px;
+  }
+  .card-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+
+  /* Prompt area */
+  .prompt-toggle {
+    background: var(--prompt-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    transition: border-color 0.2s;
+  }
+  .prompt-toggle:hover { border-color: var(--accent2); }
+  .prompt-toggle-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--accent2);
+    text-transform: uppercase;
+  }
+  .prompt-chevron {
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  .prompt-toggle.open .prompt-chevron { transform: rotate(180deg); }
+
+  .prompt-content {
+    display: none;
+    padding: 12px 14px 14px;
+    background: var(--prompt-bg);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    margin-top: -2px;
+  }
+  .prompt-content.open { display: block; }
+  .prompt-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    line-height: 1.7;
+    color: #a0a0c0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    color: #fff;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    width: 100%;
+    text-transform: uppercase;
+  }
+  .copy-btn:hover { background: #ff1f55; }
+  .copy-btn:active { transform: scale(0.98); }
+  .copy-btn.copied { background: #00b87a; }
+
+  /* Product link */
+  .card-link {
+    display: block;
+    text-align: center;
+    padding: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-decoration: none;
+    border-top: 1px solid var(--border);
+    transition: color 0.2s, background 0.2s;
+    text-transform: uppercase;
+  }
+  .card-link:hover { color: var(--accent2); background: rgba(0,212,255,0.04); }
+
+  /* Category colors */
+  .cat-cartoon  { background: rgba(255,61,107,0.15); color: #ff7096; }
+  .cat-neon     { background: rgba(0,212,255,0.12); color: var(--accent2); }
+  .cat-editorial{ background: rgba(255,201,74,0.12); color: var(--gold); }
+  .cat-sketch   { background: rgba(180,120,255,0.12); color: #c490ff; }
+  .cat-holiday  { background: rgba(80,220,120,0.12); color: #50dc78; }
+  .cat-cinematic{ background: rgba(255,140,60,0.12); color: #ff8c3c; }
+  .cat-bundle   { background: rgba(255,255,255,0.1); color: #fff; }
+
+  /* ── EMPTY STATE ── */
+  #empty-state {
+    display: none;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+    grid-column: 1/-1;
+  }
+  #empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  #empty-state p { font-family: 'DM Mono', monospace; font-size: 13px; }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 48px;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: #00b87a;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .header, .controls { padding-left: 20px; padding-right: 20px; }
+    .grid-container { padding: 20px; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .header-stats { gap: 16px; }
+    .controls { top: 97px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-eyebrow">OMG Booth LLC</span>
+      <div class="logo-title">Snappic <span>Prompt</span> Catalog</div>
+    </div>
+    <div class="header-stats">
+      <div class="stat">
+        <div class="stat-num" id="total-count">97</div>
+        <div class="stat-label">Prompts</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">7</div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Events</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="search" id="search" placeholder="Search prompts by name or style..." autocomplete="off">
+    </div>
+    <div class="filter-group">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="cartoon">Cartoon</button>
+      <button class="filter-btn" data-filter="neon">Neon / Cyber</button>
+      <button class="filter-btn" data-filter="editorial">Editorial</button>
+      <button class="filter-btn" data-filter="sketch">Sketch / Ink</button>
+      <button class="filter-btn" data-filter="cinematic">Cinematic</button>
+      <button class="filter-btn" data-filter="holiday">Holiday</button>
+    </div>
+    <span id="result-count">97 prompts</span>
+  </div>
+</div>
+
+<div class="grid-container">
+  <div class="grid" id="grid">
+    <!-- Cards injected by JS -->
+    <div id="empty-state">
+      <div class="empty-icon">🎭</div>
+      <p>No prompts match your search.</p>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  OMG BOOTH LLC · SNAPPIC AI PROMPT CATALOG · REVERSE-ENGINEERED FOR INTERNAL USE
+</footer>
+
+<div class="toast" id="toast">✓ Prompt copied to clipboard</div>
+
+<script>
+const BASE = 'https://digitalstudiobyryan.com';
+
+const PRODUCTS = [
+  {name:"Toon Power 2.0",price:"$57",slug:"toon-power-2-0",img:"toon-power-2-0-606.webp?v=1773858072",cat:"cartoon",prompt:"Transform the person in this photo into a bold 3D cartoon portrait with a confident pose and expressive styling. Use vibrant comic-book lighting with a polished modern animated finish. Preserve the guest's real facial features, skin tone, and hairstyle. Adapt styling based on any glasses or accessories present. The result should feel like a fun, recognizable power-character transformation — high energy, dynamic, and polished. High resolution output."},
+  {name:"Animation Studio Sketch",price:"$37",slug:"animation-studio-sketch",img:"animation-studio-sketch-863.webp?v=1773857949",cat:"sketch",prompt:"Transform the person in this photo into a shoulders-up pencil-sketch portrait in a classic animation-inspired character design style. Preserve the guest's recognizable facial features, skin tone, and hairstyle. Add clean sketch linework with subtle crosshatching and a polished hand-drawn finish. The result should feel like a frame from a classic animated production — expressive, clean, and timeless."},
+  {name:"Smart Vector",price:"$47",slug:"smart-vector",img:"smart-vector-905.webp?v=1773857828",cat:"editorial",prompt:"Transform the person in this photo into a chest-up stylized portrait with a semi-realistic character finish and slightly enhanced proportions. Use a clean editorial look with subtle shading, dark styling, and strong contrast. Preserve real facial details, natural hair texture, and recognizable structure. The result should feel like a polished illustrated editorial portrait — confident, sharp, and professional."},
+  {name:"Modern Editorial",price:"$47",slug:"modern-editorial",img:"modern-editorial-540.webp?v=1773857708",cat:"editorial",prompt:"Transform the person in this photo into a chest-up semi-realistic stylized portrait with a clean editorial finish and slightly enhanced proportions. Keep the guest's real facial features, skin tone, and hairstyle intact. Apply a polished illustrated finish with realistic character-driven detail. The result should feel like a high-end illustrated magazine portrait — refined, editorial, and true to the subject."},
+  {name:"Signature Character",price:"$37",slug:"signature-character",img:"signature-character-372.webp?v=1773857709",cat:"cartoon",prompt:"Transform the person in this photo into a signature character-style illustrated portrait. Preserve the guest's real facial features and likeness while applying a stylized illustrated finish. The result should feel like a personalized character portrait — expressive, polished, and clearly recognizable as the subject."},
+  {name:"Easter Bloom Fantasy",price:"$57",slug:"easter-bloom-fantasy",img:"easter-bloom-fantasy-202.webp?v=1773857229",cat:"holiday",prompt:"Transform the person in this photo into a fantasy Easter-themed portrait surrounded by blooming spring flowers in soft pastel tones. Preserve the guest's real facial features and likeness. Use soft, dreamy lighting with lush floral elements — cherry blossoms, tulips, or wildflowers. The result should feel like a whimsical editorial spring portrait — magical, colorful, and celebratory."},
+  {name:"Easter Bunny",price:"$57",slug:"easter-bunny",img:"easter-bunny-593.webp?v=1773857112",cat:"holiday",prompt:"Transform the person in this photo into a fun Easter Bunny-themed portrait. Preserve the guest's real facial features and likeness while incorporating Easter bunny elements — soft bunny ears, pastel colors, and festive spring styling. The result should feel playful, warm, and celebratory — perfect for Easter event activations."},
+  {name:"Pastel Easter Garden",price:"$57",slug:"pastel-easter-garden",img:"pastel-easter-garden-199.webp?v=1773856989",cat:"holiday",prompt:"Transform the person in this photo into a portrait set in a soft pastel Easter garden. Preserve the guest's real facial features and likeness. Surround them with gentle pastel florals, Easter eggs, and lush greenery in soft spring light. The result should feel like a dreamy Easter garden editorial — gentle, colorful, and perfectly spring-themed."},
+  {name:"Easter Garden Picnic",price:"$57",slug:"easter-garden-picnic",img:"easter-garden-picnic-199.webp?v=1773856900",cat:"holiday",prompt:"Transform the person in this photo into a portrait set at a bright Easter garden picnic scene. Preserve the guest's real facial features and likeness. Place them in an outdoor spring setting with Easter picnic elements — checkered blankets, Easter baskets, wildflowers, and warm natural light."},
+  {name:"Easter Egg Hunt Adventure",price:"$57",slug:"easter-egg-hunt-adventure",img:"easter-egg-hunt-adventure.webp",cat:"holiday",prompt:"Transform the person in this photo into a fun Easter egg hunt adventure portrait. Preserve the guest's real facial features and likeness. Place them in a vibrant outdoor spring scene actively hunting for colorful Easter eggs — bright colors, playful energy, and festive Easter styling throughout."},
+  {name:"Bunny Ears Carrot Portrait",price:"$57",slug:"bunny-ears-carrot-portrait",img:"bunny-ears-carrot-portrait.webp",cat:"holiday",prompt:"Transform the person in this photo into a playful portrait featuring bunny ears and carrot props. Preserve the guest's real facial features and likeness. Add cute bunny ears and Easter carrot elements in a bright, cheerful style. The result should feel fun, festive, and perfect for Easter family photo booth activations."},
+  {name:"Studio Icon",price:"$65",slug:"studio-icon",img:"studio-icon.webp",cat:"editorial",prompt:"Transform the person in this photo into a high-end studio icon portrait. Preserve the guest's real facial features and likeness. Use premium studio lighting with a polished, iconic compositional feel — strong, confident, and editorial. The result should feel like a signature studio portrait that defines the subject as a powerful individual presence."},
+  {name:"Countdown Halo",price:"$57",slug:"countdown-halo",img:"countdown-halo.webp",cat:"cinematic",prompt:"Transform the person in this photo into an ultra-realistic 8K studio portrait with a dramatic glowing halo ring effect surrounding the head. Preserve the guest's real facial features and likeness. Use cinematic studio lighting that interacts with the glowing halo. The result should feel like a high-end fashion campaign — powerful, ethereal, and visually striking."},
+  {name:"Shattered Reflections",price:"$57",slug:"shattered-reflections",img:"shattered-reflections.webp",cat:"cinematic",prompt:"Transform the person in this photo into an ultra-realistic cinematic portrait with a shattered mirror fragment effect. Preserve the guest's real facial features and likeness. Scatter broken mirror shards around the subject that reflect fragmented versions of their face. Use dramatic, high-contrast lighting. The result should feel cinematic and editorial — visually complex, bold, and unique."},
+  {name:"Pop Art Power",price:"$57",slug:"pop-art-power",img:"pop-art-power.webp",cat:"editorial",prompt:"Transform the person in this photo into a bold pop-art illustrated portrait with vivid color blocking. Preserve the guest's real facial features and likeness. Use flat, bold colors with strong outlines and high-contrast graphic elements inspired by classic pop art. The result should feel energetic, graphic, and eye-catching — bold enough to command attention at any event."},
+  {name:"Lone Listener",price:"$57",slug:"lone-listener",img:"lone-listener.webp",cat:"cinematic",prompt:"Transform the person in this photo into a cinematic portrait of a lone figure listening to music in an atmospheric setting. Preserve the guest's real facial features and likeness. Use moody, atmospheric lighting with headphones as a key prop and an evocative background. The result should feel like a cinematic music editorial — emotive, cool, and atmospheric."},
+  {name:"Sassy Toon Avatar",price:"$57",slug:"sassy-toon-avatar",img:"sassy-toon-avatar.webp",cat:"cartoon",prompt:"Transform the person in this photo into a sassy, expressive toon-style avatar portrait. Preserve the guest's real facial features and likeness while amplifying their expression into a confident, playful toon character. Use bold outlines, vibrant colors, and exaggerated but friendly expressions. The result should feel fun, bold, and personality-forward — perfect as a shareable avatar."},
+  {name:"Citrus Linewash",price:"$37",slug:"citrus-limewash",img:"citrus-linewash.webp",cat:"sketch",prompt:"Transform the person in this photo into a stylized portrait using a citrus-toned linewash illustration style. Preserve the guest's real facial features and likeness. Apply warm citrus colors — yellows, oranges, and coral tones — with a clean linework wash finish. The result should feel fresh, vibrant, and graphic — like a modern fashion illustration with a warm color palette."},
+  {name:"Teal & Crimson",price:"$37",slug:"teal-crimson",img:"teal-crimson.webp",cat:"editorial",prompt:"Transform the person in this photo into a bold two-tone portrait using a teal and crimson color palette. Preserve the guest's real facial features and likeness. Use high-contrast teal and crimson lighting or illustration tones with a graphic, editorial finish. The result should feel striking and modern — a punchy two-color portrait that reads instantly."},
+  {name:"Pop Prism",price:"$37",slug:"pop-prism",img:"pop-prism.webp",cat:"editorial",prompt:"Transform the person in this photo into a bold prism-effect pop art portrait. Preserve the guest's real facial features and likeness. Apply prismatic color splits — like light passing through a prism — across the portrait with a graphic pop art finish. Use bold, vivid colors and clean graphic shapes. The result should feel psychedelic, modern, and visually dynamic."},
+  {name:"Tech Noir",price:"$57",slug:"tech-noir",img:"tech-noir-763.webp?v=1773112874",cat:"neon",prompt:"Transform the person in this photo into a cinematic close-up studio portrait with a head-and-shoulders crop. Preserve the guest's real facial features and likeness. Use a dark tech noir aesthetic — deep shadows, cool desaturated tones, subtle edge lighting, and a moody high-tech atmosphere. The result should feel like a cinematic sci-fi thriller headshot — intense, atmospheric, and visually sharp."},
+  {name:"Splash Frame",price:"$57",slug:"splash-frame",img:"splash-frame-647.webp?v=1773112856",cat:"editorial",prompt:"Transform the person in this photo into a modern editorial portrait with dynamic illustrated paint strokes framing them. Preserve the guest's real facial features and likeness. Blend the realistic portrait with bold artistic paint splash elements — brushstrokes, ink splashes, or color bursts. The result should feel like a gallery-ready portrait meets street art."},
+  {name:"Mono Mascot",price:"$37",slug:"mono-mascot",img:"mono-mascot-449.webp?v=1773112835",cat:"sketch",prompt:"Transform the person in this photo into a clean high-contrast vector mascot portrait. Show only the head in a three-quarter view, facing slightly to one side. Use bold black outlines with flat monochrome fills — black, white, and neutral gray only. No gradients, no textures, no shadows. Simplify the face into a friendly, confident expression. Remove all eyewear. Preserve hair and facial hair simplified into smooth solid shapes. Thick outer stroke, minimal interior detail. Solid neutral background. No neck, no body. Logo-ready, sticker-ready, high resolution output."},
+  {name:"Candy Swipe",price:"$27",slug:"candy-swipe",img:"candy-swipe-448.webp?v=1773112809",cat:"editorial",prompt:"Transform the person in this photo into a modern mixed-media portrait blending real photography with illustrated overlays in sweet, candy-inspired colors. Preserve the guest's real facial features and likeness. Layer bright pastel illustrated elements — color swipes, geometric shapes, or graphic accents — over a realistic base portrait. The result should feel playful, modern, and social-media ready."},
+  {name:"Neon Doodle",price:"$27",slug:"neon-doodle",img:"neon-doodle-794.webp?v=1773112785",cat:"neon",prompt:"Transform the person in this photo into a high-contrast editorial portrait with graphic neon doodle overlays. Preserve the guest's real facial features and likeness. Keep the base portrait bold and high-contrast, then layer glowing neon doodle elements — lines, shapes, stars, or graphic squiggles — over it. The result should feel like street art meets studio portrait — energetic, graphic, and shareable."},
+  {name:"Power Pose",price:"$57",slug:"power-pose",img:"power-pose-944.webp?v=1773112764",cat:"cartoon",prompt:"Transform the person in this photo into a bold pop-art illustrated portrait. Preserve the guest's real facial features and likeness. Place them in a confident, powerful pose with vibrant flat colors, bold outlines, and strong graphic composition. Use comic-inspired color blocking and clean illustration lines. The result should feel like a superhero moment — commanding, colorful, and visually bold."},
+  {name:"Colorwash Portrait",price:"$27",slug:"colorwash-portrait",img:"colorwash-portrait-738.webp?v=1773112740",cat:"sketch",prompt:"Transform the person in this photo into a high-detail illustrated portrait in a modern painterly digital style. Preserve the guest's real facial features and likeness. Apply a rich digital color wash with painterly brushwork, soft color gradients, and illustrative detail. The result should feel like a premium digital painting — expressive, textured, and gallery-worthy."},
+  {name:"Vector Vogue",price:"$57",slug:"vector-vogue",img:"vector-vogue-423.webp?v=1773112699",cat:"editorial",prompt:"Transform the person in this photo into a stylized vector-style illustrated portrait with a high-fashion editorial feel. Preserve the guest's real facial features and likeness. Use clean vector lines, flat but sophisticated color fills, and a vogue-editorial composition. The result should feel like a luxury fashion illustration — sleek, graphic, and unmistakably stylish."},
+  {name:"Modern Muse",price:"$57",slug:"modern-muse",img:"modern-muse-114.webp?v=1773112677",cat:"editorial",prompt:"Transform the person in this photo into a bold high-contrast illustration portrait. Preserve the guest's real facial features and likeness. Use strong graphic contrast, clean illustration lines, and a powerful editorial composition. The result should feel like a modern art muse portrait — striking, confident, and visually commanding."},
+  {name:"Urban Ink",price:"$57",slug:"urban-ink",img:"urban-ink-140.webp?v=1773112636",cat:"sketch",prompt:"Transform the person in this photo into a stylized editorial caricature portrait from the chest up. Preserve the guest's identity and likeness while tastefully exaggerating key facial features in an urban ink illustration style. Use bold ink lines with a gritty editorial finish. The result should feel like a high-end streetwear editorial — edgy, expressive, and unmistakably cool."},
+  {name:"Benchside Brews",price:"$57",slug:"benchside-brews",img:"benchside-brews-176.webp?v=1773112615",cat:"cinematic",prompt:"Transform the person in this photo into a relaxed, cinematic portrait set in a warm craft brewery or taproom environment. Preserve the guest's real facial features and likeness. Place them in a casual, confident pose at a bar or bench with warm amber lighting, wooden surfaces, and the atmosphere of a quality brew setting. The result should feel like a lifestyle brand photo — relaxed, cool, and authentic."},
+  {name:"Elevator Cool",price:"$57",slug:"elevator-cool",img:"elevator-cool-920.webp?v=1773112595",cat:"cinematic",prompt:"Transform the person in this photo into a stylish, cinematic portrait set in a sleek modern elevator. Preserve the guest's real facial features and likeness. Use cool, reflective elevator lighting — polished metal surfaces, mirror reflections, and clean lines. The guest should look effortlessly cool, relaxed but sharp. The result should feel like a luxury lifestyle editorial — understated, confident, and cinematic."},
+  {name:"Toon Glow",price:"$57",slug:"toon-glow",img:"toon-glow-643.webp?v=1773112575",cat:"cartoon",prompt:"Transform the person in this photo into a bold toon-style portrait with a glowing luminous effect. Preserve the guest's real facial features and likeness. Use vibrant toon illustration lines with a warm inner glow effect — bright highlights radiating from the subject against a dynamic background. The result should feel like an animated character poster — energetic, luminous, and eye-catching."},
+  {name:"Neon Gaze",price:"$57",slug:"neon-gaze",img:"neon-gaze-454.webp?v=1773112482",cat:"neon",prompt:"Transform the person in this photo into a close-up cinematic portrait with intense neon lighting illuminating the face. Preserve the guest's real facial features and likeness. Focus tightly on the face and eyes with dramatic neon color — electric blue, magenta, or violet — casting strong light and shadow. The result should feel like a high-fashion neon editorial — intense, intimate, and visually striking."},
+  {name:"Framed in Fragments",price:"$57",slug:"framed-in-fragments",img:"framed-in-fragments-137.webp?v=1773112440",cat:"cinematic",prompt:"Transform the person in this photo into a creative portrait framed by fragmented geometric shapes or broken frame elements. Preserve the guest's real facial features and likeness. Surround the subject with fragmented borders, geometric shards, or deconstructed frame elements. The result should feel like a contemporary art portrait — layered, graphic, and visually inventive."},
+  {name:"Cyber Halo",price:"$57",slug:"cyber-halo",img:"cyber-halo-478.webp?v=1773112418",cat:"neon",prompt:"Transform the person in this photo into a futuristic cyberpunk portrait with a glowing cyber halo effect above or around the head. Preserve the guest's real facial features and likeness. Use cool neon lighting — electric blue, cyan, or violet — with a sleek tech-forward environment. The result should feel like a sci-fi concept art portrait — powerful, futuristic, and cinematic."},
+  {name:"Loved & Lit",price:"$57",slug:"loved-lit",img:"loved-lit-454.webp?v=1773112398",cat:"holiday",prompt:"Transform the person in this photo into a warm, glowing portrait with romantic soft lighting. Preserve the guest's real facial features and likeness. Use warm pink, rose gold, or golden tones with soft bokeh lighting and a warm, intimate atmosphere. The result should feel like a love-themed editorial portrait — luminous, warm, and emotionally resonant."},
+  {name:"Play, Pause, Pose",price:"$57",slug:"play-pause-pose",img:"play-pause-pose-433.webp?v=1773112376",cat:"editorial",prompt:"Transform the person in this photo into a music-themed portrait with media player visual elements. Preserve the guest's real facial features and likeness. Incorporate play/pause/stop iconography or music visualization graphics as design elements around the subject. The result should feel like a music streaming platform concept portrait — modern, graphic, and culturally resonant."},
+  {name:"Camera Ready",price:"$57",slug:"camera-ready",img:"camera-ready-843.webp?v=1773112334",cat:"editorial",prompt:"Transform the person in this photo into a high-resolution studio headshot from the shoulders up, centered in frame. Preserve the guest's real facial features and likeness. Use soft, flattering beauty lighting optimized for all skin tones with crisp focus on the eyes. Apply subtle professional retouching while keeping skin texture natural. The result should look like a premium studio headshot — clean, polished, and professionally lit."},
+  {name:"Spectrum Smoke",price:"$57",slug:"spectrum-smoke",img:"spectrum-smoke-981.webp?v=1773112248",cat:"cinematic",prompt:"Transform the person in this photo into a full-body studio portrait shot from a low angle so they appear tall, powerful, and dramatic. Preserve the guest's real facial features and likeness. Surround the subject with colorful spectrum smoke — vibrant smoke trails in multiple vivid colors swirling around the figure. Use dramatic studio lighting. The result should feel bold and powerful — commanding, colorful, and visually explosive."},
+  {name:"Spectrum Persona",price:"$57",slug:"spectrum-persona",img:"spectrum-persona-220.webp?v=1773112184",cat:"cinematic",prompt:"Transform the person in this photo into a chest-up studio portrait with bold multi-color spectrum lighting across the face and shoulders. Preserve the guest's real facial features and likeness. Cast multiple distinct color bands — red, blue, green, purple — as light across the face. Use a dark background to maximize contrast. The result should feel like a high-concept studio portrait — colorful, graphic, and visually dynamic."},
+  {name:"Neon Velocity 2.0",price:"$57",slug:"neon-velocity-2-0",img:"neon-velocity-2-0-117.webp?v=1773112162",cat:"neon",prompt:"Transform the person in this photo into a cinematic head-and-shoulders portrait of the guest standing in a neon-lit city at night. Preserve the guest's real facial features and likeness. Use electric neon signs and urban nighttime lighting — glowing reds, blues, greens — reflecting off the guest's face and jacket. The result should feel like a cinematic city thriller still — cool, vivid, and cinematic."},
+  {name:"Neon Noir",price:"$57",slug:"neon-noir",img:"neon-noir-903.webp?v=1773112139",cat:"neon",prompt:"Transform the person in this photo into a bold neon vector-style cyberpunk portrait from the chest up. Preserve the guest's natural hairstyle, facial hair, and features. Dress them in a dark turtleneck or simple dark top. Render skin in stylized neon colors with strong magenta and deep blue highlights and shadows. Add sleek sunglasses with simple graphic reflections. Use clean outlines and smooth gradients with high-contrast cyberpunk illustration style. Pure black background. No logos, no text, no watermarks."},
+  {name:"Neon Drift",price:"$57",slug:"neon-drift",img:"neon-drift-814.webp?v=1773112081",cat:"neon",prompt:"Transform the person in this photo into a high-end fashion poster-style portrait with a neon drift aesthetic. Preserve the guest's real facial features and likeness. Use cool neon color grading with a motion-blur drift effect — suggesting speed and movement — in a sleek fashion campaign composition. The result should feel like a luxury streetwear campaign — fast, stylish, and high-impact."},
+  {name:"Golden Haze",price:"$57",slug:"golden-haze",img:"golden-haze-122.webp?v=1773112060",cat:"cinematic",prompt:"Transform the person in this photo into a high-end fashion poster-style portrait in a warm orange monochrome palette. Preserve the guest's real facial features and likeness. Use a warm golden haze — deep ambers, burnt oranges, and rich golden tones — with a soft haze or diffusion effect. The result should feel warm, aspirational, and editorial — like a golden-hour campaign image."},
+  {name:"Triple Vision",price:"$57",slug:"triple-vision",img:"triple-vision-488.webp?v=1773112040",cat:"cinematic",prompt:"Transform the person in this photo into a gender-neutral high-end portrait with a sharp central face and dual flanking reflections. Preserve the guest's real facial features and likeness. Show the main face centered and sharp, with two slightly toned mirror-image flanking portraits on either side. The result should feel like a concept fashion campaign — symmetrical, striking, and visually sophisticated."},
+  {name:"Doodle Royalty",price:"$57",slug:"doodle-royalty",img:"doodle-royalty-800.webp?v=1773112018",cat:"sketch",prompt:"Transform the person in this photo into a bold portrait layered with royal doodle illustration elements. Preserve the guest's real facial features and likeness. Overlay hand-drawn crown, jewel, and ornamental doodle elements around the subject in a playful but regal style. The result should feel like a fun editorial royalty portrait — whimsical, bold, and personality-driven."},
+  {name:"Velvet & Vine",price:"$57",slug:"velvet-vine",img:"velvet-vine-837.webp?v=1773111996",cat:"cinematic",prompt:"Transform the person in this photo into a lush, moody portrait surrounded by deep velvet tones and botanical vine elements. Preserve the guest's real facial features and likeness. Use rich jewel-toned velvet backgrounds — deep emerald, burgundy, or violet — with elegant trailing vine or floral elements. The result should feel like a dark botanical editorial — opulent, mysterious, and visually rich."},
+  {name:"The Page Turner",price:"$57",slug:"the-page-turner",img:"the-page-turner.webp",cat:"cinematic",prompt:"Transform the person in this photo into a sophisticated editorial portrait styled around a literary or book-themed aesthetic. Preserve the guest's real facial features and likeness. Place them in a warm, intellectual setting with books, pages, or literary design elements as visual accents. The result should feel like a polished author portrait or literary editorial — thoughtful, warm, and elegantly composed."},
+  {name:"The Chessboard",price:"$57",slug:"the-chessboard",img:"the-chessboard.webp",cat:"cinematic",prompt:"Transform the person in this photo into a high-contrast portrait styled around a chessboard aesthetic. Preserve the guest's real facial features and likeness. Use black and white geometric chessboard patterns in the environment or as graphic design elements around the subject. Use sharp, dramatic lighting. The result should feel like a strategic, intellectual editorial — graphic, bold, and visually calculated."},
+  {name:"Mirror, Mirror",price:"$57",slug:"mirror-mirror",img:"mirror-914.webp?v=1773111905",cat:"cinematic",prompt:"Transform the person in this photo into a cinematic portrait featuring mirror reflections as the central visual element. Preserve the guest's real facial features and likeness. Show the guest alongside a mirror reflection — possibly slightly different in lighting or angle — creating a doubled, layered visual effect. The result should feel like a high-concept editorial — introspective, cinematic, and visually compelling."},
+  {name:"Vapor",price:"$57",slug:"vapor",img:"vapor-244.webp?v=1773111858",cat:"neon",prompt:"Transform the person in this photo into a dreamy vaporwave-aesthetic portrait with soft pastel tones and ethereal atmospheric haze. Preserve the guest's real facial features and likeness. Use soft pinks, lavenders, and cool aquas with a dreamy, diffused haze quality. The result should feel like a retro-futuristic vaporwave editorial — soft, nostalgic, and visually hypnotic."},
+  {name:"Paper Throne",price:"$57",slug:"paper-throne",img:"paper-throne-955.webp?v=1773111832",cat:"editorial",prompt:"Transform the person in this photo into a dramatic portrait seated on a throne constructed entirely from paper or origami elements. Preserve the guest's real facial features and likeness. Build a striking paper-craft throne environment around the subject with intricate folded paper textures. The result should feel like a conceptual art portrait — creative, architectural, and uniquely distinctive."},
+  {name:"TriGlow",price:"$57",slug:"triglow",img:"triglow-542.webp?v=1773111811",cat:"cinematic",prompt:"Transform the person in this photo into a bold portrait with three distinct glowing light sources hitting the face from different angles. Preserve the guest's real facial features and likeness. Use three strong colored lights — such as red, blue, and green — creating a dramatic tri-color glow across the face and shoulders against a dark background."},
+  {name:"Nimbus Lounge",price:"$57",slug:"nimbus-lounge",img:"nimbus-lounge-796.webp?v=1773111791",cat:"cinematic",prompt:"Transform the person in this photo into a relaxed, elevated portrait set in a luxurious cloudy or sky lounge environment. Preserve the guest's real facial features and likeness. Place the guest in a sophisticated lounge setting with soft cloud-like atmospheric elements, warm ambient lighting, and a premium, elevated mood. The result should feel like a luxury lifestyle portrait — aspirational, serene, and visually polished."},
+  {name:"Blush & Brushes",price:"$57",slug:"blush-brushes",img:"blush-brushes-434.webp?v=1773111751",cat:"editorial",prompt:"Transform the person in this photo into a playful beauty editorial portrait with a clean campaign-style finish. Preserve the guest's real facial features and likeness. Use soft blush pinks and warm tones with beauty-campaign lighting. Add subtle makeup or beauty styling elements. The result should feel like a cosmetics brand campaign portrait — fresh, feminine, and beautifully lit."},
+  {name:"Luminous",price:"$57",slug:"luminous",img:"luminous-190.webp?v=1773111729",cat:"neon",prompt:"Transform the person in this photo into a futuristic close-up portrait with a dramatic but elegant sci-fi vibe. Preserve the guest's real facial features and likeness. Use luminous, otherworldly lighting — cool whites, soft glows, and iridescent light effects — creating a clean futuristic aesthetic. The result should feel like a luxury sci-fi editorial — ethereal, glowing, and visually stunning."},
+  {name:"Aura Glass",price:"$57",slug:"aura-glass",img:"aura-glass-807.webp?v=1773111686",cat:"editorial",prompt:"Transform the person in this photo into a minimalist close-up profile portrait with an airy, editorial feel and a soft aura glass effect. Preserve the guest's real facial features and likeness. Use clean, minimal composition with soft glowing aura light effects — like light diffracting through glass — creating a translucent, ethereal atmosphere."},
+  {name:"Golden Hour",price:"$57",slug:"golden-hour",img:"golden-hour-225.webp?v=1773111662",cat:"cinematic",prompt:"Transform the person in this photo into a low-angle cinematic driving portrait in a convertible at golden hour. Preserve the guest's real facial features and likeness. Place them in the driver's seat of an open-top convertible with warm golden-hour sunlight flooding the scene — long shadows, lens flares, and the feeling of an open road. The result should feel like a luxury automotive campaign — aspirational, cinematic, and sun-drenched."},
+  {name:"DualTone Glow",price:"$57",slug:"dualtone-glow",img:"dualtone-glow.webp",cat:"cinematic",prompt:"Transform the person in this photo into a cinematic head-and-shoulders portrait with the guest facing camera and a soft, relaxed smile. Apply dual-tone glow lighting — two complementary colored lights hitting the face from opposite sides — creating a rich, glowing dual-tone effect. Dark background. The result should feel like a premium studio portrait — warm, glowing, and polished."},
+  {name:"Creative Orbit",price:"$57",slug:"creative-orbit",img:"creative-orbit.webp",cat:"cinematic",prompt:"Transform the person in this photo into a full-body cinematic studio portrait with the guest standing confidently in the center of the frame. Preserve the guest's real facial features and likeness. Surround them with orbital graphic or light elements — glowing rings, light trails, or geometric orbiting shapes — creating a dynamic sense of energy and motion."},
+  {name:"Electric Formal",price:"$57",slug:"electric-formal",img:"electric-formal.webp",cat:"cinematic",prompt:"Transform the person in this photo into a sleek full-body or three-quarter portrait in modern formalwear. Preserve the guest's real facial features and likeness. Dress them in a sharp, well-fitted tuxedo or formal outfit with electric accent lighting — subtle neon or cool-toned light accents that elevate the formal look with a modern edge. The result should feel like a luxury gala portrait — formal, sharp, and electrifyingly elegant."},
+  {name:"Neon Smoke",price:"$57",slug:"neon-smoke",img:"neon-smoke.webp",cat:"neon",prompt:"Transform the person in this photo into a hyper-realistic neon studio portrait. Preserve the guest's real facial features and likeness. Surround them with colorful neon smoke — vivid electric colors in swirling smoke trails — against a dark studio background. Use dramatic neon lighting on the face. The result should feel like a high-concept music video still — electrifying, vivid, and visually explosive."},
+  {name:"Futurewave",price:"$57",slug:"futurewave",img:"futurewave.webp",cat:"neon",prompt:"Transform the person in this photo into a hyper-realistic neon city street portrait at night. Preserve the guest's real facial features and likeness. Place them on a rain-slicked urban street with glowing neon signs, electric city lights, and a futuristic cityscape atmosphere. Use vivid neon color reflections on their face and clothing."},
+  {name:"High Roller",price:"$37",slug:"high-roller",img:"high-roller.webp",cat:"cinematic",prompt:"Transform the person in this photo into a sleek, high-stakes portrait in a luxury casino or high-roller environment. Preserve the guest's real facial features and likeness. Place them in an atmosphere of sophisticated wealth — casino chips, playing cards, dark polished surfaces, low warm lighting. The result should feel like a VIP casino lifestyle portrait — cool, luxurious, and effortlessly commanding."},
+  {name:"Bloom Halo",price:"$57",slug:"bloom-halo",img:"bloom-halo.webp",cat:"editorial",prompt:"Transform the person in this photo into a soft, dreamy portrait with a floral bloom halo effect surrounding the head. Preserve the guest's real facial features and likeness. Create a halo of blooming flowers — roses, peonies, or wildflowers — glowing softly behind and around the head. The result should feel like a romantic botanical editorial — beautiful, feminine, and naturally luminous."},
+  {name:"Prime Time Player",price:"$57",slug:"prime-time-player",img:"prime-time-player.webp",cat:"cinematic",prompt:"Transform the person in this photo into a bold, prime-time broadcast-style portrait. Preserve the guest's real facial features and likeness. Use dramatic studio lighting as if lit for television — sharp key light, clean fill, polished look — with an energy that feels ready for the spotlight. The result should feel like a sports broadcast or entertainment TV portrait — polished, confident, and commanding the moment."},
+  {name:"Queen of Hearts Couture",price:"$57",slug:"queen-of-hearts-couture-portrait",img:"queen-of-hearts-couture-portrait.webp",cat:"editorial",prompt:"Transform the person in this photo into a Queen of Hearts-inspired couture portrait. Preserve the guest's real facial features and likeness. Style them in dramatic red and black Queen of Hearts couture — heart motifs, regal crown, bold red accents, and theatrical makeup. Use dramatic, high-fashion editorial lighting. The result should feel like a luxury fashion editorial meets playing card royalty — bold, dramatic, and unforgettable."},
+  {name:"Cinematic Motion Layer",price:"$57",slug:"cinematic-motion-layer-portrait",img:"cinematic-motion-layer-portrait.webp",cat:"cinematic",prompt:"Transform the person in this photo into a cinematic portrait with a motion-layer effect — multiple semi-transparent layers of the subject at slightly different positions suggesting movement through time. Preserve the guest's real facial features and likeness. Use dramatic cinematic lighting with a dark background. The result should feel like a high-concept editorial — dynamic, cinematic, and visually complex."},
+  {name:"Cinematic Card Control",price:"$57",slug:"cinematic-card-control-portrait",img:"cinematic-card-control-portrait.webp",cat:"cinematic",prompt:"Transform the person in this photo into a cinematic portrait with playing cards as a central visual element. Preserve the guest's real facial features and likeness. Show the guest confidently manipulating or surrounded by fanned, floating, or cascading playing cards in a dramatic, controlled environment. Use moody cinematic lighting. The result should feel like a magician's cinematic editorial — mysterious, skilled, and visually dramatic."},
+  {name:"Electric Echo – Neon Double-Exposure",price:"$57",slug:"electric-echo-portraits-neon-double-exposure-look",img:"electric-echo.webp",cat:"neon",prompt:"Transform the person in this photo into a neon double-exposure portrait. Preserve the guest's real facial features and likeness. Layer a neon cityscape, geometric pattern, or electric graphic over the subject using a double-exposure blending effect — the secondary image glowing through in electric neon tones. Use a dark background to maximize neon contrast."},
+  {name:"All-In Valentine's Day Pack",price:"$199",slug:"all-in-valentine-s-day-ai-photo-booth-pack",img:"all-in-valentines-day-ai-photo-booth-pack.webp",cat:"holiday",prompt:"BUNDLE — Multiple Valentine's Day prompts included. Transform guests into romantic Valentine's Day-themed portraits with a variety of styles: red heart backdrops, rose petal scenes, warm love-lit glam, and editorial Valentine's concepts. Each style preserves the guest's real facial features and likeness while applying a distinct Valentine's Day aesthetic. High resolution output optimized for Snappic event codes."},
+  {name:"Royal Hearts Card Studio – King & Queen",price:"$65",slug:"royal-hearts-card-studio-king-queen",img:"royal-hearts-card-studio-king-queen.webp",cat:"editorial",prompt:"Transform the person in this photo into a royal playing card portrait — styled as a King or Queen of Hearts. Preserve the guest's real facial features and likeness. Style them in dramatic regal playing card aesthetics — royal crown, bold red and black costume, and classic playing card portrait composition with ornate symmetrical framing."},
+  {name:"Love Breakthrough Studio",price:"$57",slug:"love-breakthrough-studio",img:"love-breakthrough-studio.webp",cat:"holiday",prompt:"Transform the person in this photo into a dynamic Valentine's portrait where they appear to be breaking through a heart-shaped barrier or surface. Preserve the guest's real facial features and likeness. Show them bursting through a large heart with warm pink and red Valentine's lighting. The result should feel energetic and celebratory — playful, love-themed, and perfect for Valentine's events."},
+  {name:"Love Balloon Studio",price:"$57",slug:"love-balloon-studio",img:"love-balloon-studio.webp",cat:"holiday",prompt:"Transform the person in this photo into a bright, festive Valentine's portrait surrounded by heart-shaped love balloons. Preserve the guest's real facial features and likeness. Fill the scene with large and small heart balloons in reds, pinks, and rose tones. Use warm, celebratory lighting. The result should feel joyful, romantic, and festive."},
+  {name:"Sweetheart Pop-Out Booth",price:"$57",slug:"sweetheart-pop-out-booth",img:"sweetheart-pop-out-booth.webp",cat:"holiday",prompt:"Transform the person in this photo into a Valentine's portrait with a pop-out 3D effect — the guest appears to emerge from a heart-shaped frame or Valentine's card composition. Preserve the guest's real facial features and likeness. Use warm pink and red Valentine's tones with a playful 3D pop-out illusion."},
+  {name:"Heartlight Glam Booth",price:"$57",slug:"heartlight-glam-booth",img:"heartlight-glam-booth.webp",cat:"holiday",prompt:"Transform the person in this photo into a glamorous portrait set against a bold red studio backdrop with large soft-focus heart-shaped light patterns and shadows. Preserve the guest's real facial features and likeness. Use dramatic red studio lighting with heart-shaped bokeh effects. The result should feel like a high-glam Valentine's editorial — bold, romantic, and beautifully lit."},
+  {name:"Heart Eyes Balloon – Black Edit",price:"$57",slug:"heart-eyes-balloon-black-outfit-edit",img:"heart-eyes-balloon-black-outfit-edit.webp",cat:"holiday",prompt:"Transform the person in this photo into a bright, modern Valentine's portrait scene with metallic red heart-shaped balloons. Preserve the guest's real facial features and likeness. Dress them in a sleek black outfit as a sharp contrast to the vibrant red heart balloons surrounding them. The result should feel modern, stylish, and festive — a chic Valentine's editorial with bold visual contrast."},
+  {name:"Front Page Fashion Booth",price:"$57",slug:"front-page-fashion-booth",img:"front-page-fashion-booth.webp",cat:"editorial",prompt:"Transform the person in this photo into a high-fashion editorial portrait set in a room completely covered with newspaper pages. Preserve the guest's real facial features and likeness. Cover the walls, floor, and surfaces with layered newspaper and use strong editorial fashion lighting. The result should feel like an avant-garde fashion editorial — bold, conceptual, and visually striking."},
+  {name:"Bobblehead Likeness Studio",price:"$57",slug:"bobblehead-likeness-studio",img:"bobblehead-likeness-studio.webp",cat:"cartoon",prompt:"Transform the person in this photo into a stylized 3D bobblehead-style portrait. Preserve the guest's real facial features and likeness — the face must be clearly recognizable. Render the head oversized and cartoonishly large relative to a small stylized body in classic bobblehead proportions. Use a clean studio background."},
+  {name:"Neon Tech Portrait",price:"$57",slug:"neon-tech-portrait",img:"neon-tech-portrait-832.webp?v=1773110791",cat:"neon",prompt:"Transform the person in this photo into a powerful studio portrait shot from a low upward-looking angle for a main-character feel. Preserve the guest's real facial features, identity, and overall look. Add bold dual neon lighting — cyan/teal on one side, red/orange on the other — for a high-contrast tech aesthetic. Dark background."},
+  {name:"Aesthetic Birthday Magazine Cover",price:"$57",slug:"birthday-magazine-cover",img:"aesthetic-birthday-magazine-cover-643.webp?v=1773110752",cat:"editorial",prompt:"Transform the person in this photo into a high-end birthday magazine cover portrait. Preserve the guest's real facial features and likeness. Style them as the cover star of a luxury lifestyle magazine with birthday-themed design elements — confetti accents, birthday typography, celebratory styling, and polished magazine-cover lighting."},
+  {name:"Minimalist Fashion Ink Portrait",price:"$37",slug:"minimalist-female-fashion-ink-portrait",img:"minimalist-female-fashion-ink-portrait-699.webp?v=1773110725",cat:"sketch",prompt:"Transform the person in this photo into a stylized black-and-white fashion illustration in a minimalist ink portrait style. Preserve the guest's real facial features and likeness. Use clean, precise ink linework with minimal detail — capturing essential features with elegant fashion illustration economy. No color, no fills — only confident ink lines on white."},
+  {name:"Modern Marble Bust",price:"$57",slug:"modern-marble-bust",img:"modern-marble-bust-382.webp?v=1773110684",cat:"editorial",prompt:"Transform the person in this photo into a classical-style marble bust sculpture. Preserve the guest's real facial features and likeness in the sculpture. Render them in smooth white Carrara marble with classical sculptural detail — polished surfaces, subtle veining, and museum-quality finish. Place on a simple pedestal with clean museum lighting."},
+  {name:"Cinematic Space Walk",price:"$57",slug:"cinematic-space-walk",img:"cinematic-space-walk-458.webp?v=1773110658",cat:"cinematic",prompt:"Transform the person in this photo into a cinematic astronaut space walk portrait. Preserve the guest's real facial features and likeness. Dress them in a detailed astronaut suit and place them in the vastness of deep space with Earth or stars visible behind them. Use dramatic cinematic lighting from the sun reflecting off the suit."},
+  {name:"Heartbreaker Headlines",price:"$57",slug:"heartbreaker-headlines-valentine-editorial",img:"heartbreaker-headlines-valentine-editorial-749.webp?v=1773110612",cat:"holiday",prompt:"Transform the person in this photo into a Valentine's editorial portrait with a heartbreaker headlines newspaper concept. Preserve the guest's real facial features and likeness. Style them confidently against or integrated with bold Valentine's editorial typography and headline design elements — red and pink tones, heart motifs, and bold editorial type."},
+  {name:"Custom AI Photo Booth Prompt",price:"$107",slug:"custom-ai-photo-booth-prompt",img:"custom-ai-photo-booth-prompt.webp",cat:"editorial",prompt:"CUSTOM PRODUCT — Prompt is created specifically per client brief. This is a bespoke AI photo booth prompt customized to your exact event theme, brand, or style requirements. Provide your event theme, desired style, colors, and any specific elements. The resulting prompt will be optimized for Snappic event codes and AI photo booth workflows."},
+  {name:"High-Fashion AI Sketch",price:"$37",slug:"high-fashion-ai-sketch-prompt",img:"high-fashion-ai-sketch-prompt.webp",cat:"sketch",prompt:"Transform the person in this photo into a high-fashion sketch-style portrait. Preserve the guest's real facial features and likeness. Use the aesthetic of a luxury fashion house's design studio — loose, confident pencil or ink sketching with high-fashion editorial proportions and styling. Clean white background. The result should feel like it came from a Parisian atelier sketchbook — refined, chic, and artistically confident."},
+  {name:"High-Angle AI Prompt",price:"$57",slug:"high-angle-ai-photo-booth-prompt",img:"high-angle-ai-photo-booth-prompt.webp",cat:"cinematic",prompt:"Transform the person in this photo using a dramatic high-angle camera perspective looking down at the subject. Preserve the guest's real facial features and likeness. Use a bird's-eye or steep overhead angle that creates a striking, unconventional portrait composition. The result should feel like an editorial fashion or music video still — unexpected, dramatic, and visually arresting."},
+  {name:"Fashion Glitch Prompt",price:"$57",slug:"fashion-glitch-ai-photo-booth-prompt",img:"fashion-glitch-ai-photo-booth-prompt.webp",cat:"neon",prompt:"Transform the person in this photo into a high-fashion portrait with a digital glitch art effect. Preserve the guest's real facial features and likeness. Apply controlled digital glitch distortions — pixel displacement, color channel separation, scan lines, and data corruption aesthetics — over a strong fashion portrait base."},
+  {name:"Vector Pop-Art Poster",price:"$57",slug:"vector-pop-art-poster",img:"vector-pop-art-poster.webp",cat:"editorial",prompt:"Transform the person in this photo into a bold vector pop-art poster. Preserve the guest's real facial features and likeness. Use flat, vivid pop-art color blocking with strong graphic outlines in a vintage poster composition. Add bold typographic or graphic poster elements. The result should feel like a collector's edition pop-art poster — iconic, graphic, and visually commanding."},
+  {name:"Ink Splatter Watercolor",price:"$57",slug:"ink-splatter-watercolor-sketch",img:"ink-splatter-watercolor-sketch.webp",cat:"sketch",prompt:"Transform the person in this photo into a mixed-media portrait combining ink splatter and watercolor sketch techniques. Preserve the guest's real facial features and likeness. Blend loose watercolor washes with bold ink splatter elements and sketch linework. The result should feel like a high-energy mixed-media art portrait — expressive, textured, and artistically spontaneous."},
+  {name:"Parisian Red-Chalk Portrait",price:"$57",slug:"parisian-red-chalk-portrait",img:"parisian-red-chalk-portrait.webp",cat:"sketch",prompt:"Transform the person in this photo into a Parisian red-chalk (sanguine) portrait in the style of Old Master drawings. Preserve the guest's real facial features and likeness. Use warm red-brown chalk tones on a cream or parchment-toned background with loose, confident draftsmanship and hatching. The result should feel like an authentic Parisian atelier life-drawing study — classical, warm, and artistically refined."},
+  {name:"Surreal Botanical Portrait",price:"$57",slug:"surreal-botanical-portrait",img:"surreal-botanical-portrait.webp",cat:"editorial",prompt:"Transform the person in this photo into a surreal botanical portrait where lush plant life and flowers are integrated into or growing from the subject. Preserve the guest's real facial features and likeness. Use rich botanical elements — tropical leaves, blooms, vines — merged artistically with the portrait in a dreamlike editorial style. The result should feel like a luxury editorial meets botanical surrealism."},
+  {name:"High-Angle Miniature Portrait",price:"$57",slug:"high-angle-miniature-portrait-ai-prompt",img:"high-angle-miniature-portrait-ai-prompt.webp",cat:"cinematic",prompt:"Transform the person in this photo into a high-angle miniature tilt-shift portrait — making the subject appear like a tiny figurine in a miniature world. Preserve the guest's real facial features and likeness. Use tilt-shift lens blur effect and high-angle perspective to create the illusion of a miniature diorama. The result should feel playful, unique, and visually inventive."},
+  {name:"Red–Blue Cinematic Gel Portrait",price:"$57",slug:"red-blue-cinematic-gel-portrait-ai-prompt",img:"red-blue-cinematic-gel-portrait-ai-prompt.webp",cat:"cinematic",prompt:"Transform the person in this photo into a high-contrast cinematic portrait with dramatic red and blue gel lighting split across the face. Preserve the guest's real facial features and likeness. Use bold red on one side and deep blue on the other creating a vivid split-lighting effect. Dark background. The result should feel like a cinematic thriller poster — bold, dramatic, and visually electric."},
+  {name:"3D Holiday Family Portrait",price:"$57",slug:"3d-holiday-family-portrait-ai-portrait",img:"3d-holiday-family-portrait-ai-922.webp?v=1773109754",cat:"holiday",prompt:"Transform the people in this photo into a warm, polished 3D animated holiday family portrait. Preserve each person's real facial features and likeness. Use a warm, Pixar-inspired 3D animation style with festive holiday styling — cozy sweaters, warm lighting, and a cheerful holiday atmosphere. The result should feel like a premium holiday card come to life — warm, joyful, and family-friendly."},
+];
+
+const BASE_IMG = 'https://digitalstudiobyryan.com/cdn/shop/files/';
+
+const CAT_LABELS = {
+  cartoon:   ['CARTOON','cat-cartoon'],
+  neon:      ['NEON / CYBER','cat-neon'],
+  editorial: ['EDITORIAL','cat-editorial'],
+  sketch:    ['SKETCH / INK','cat-sketch'],
+  holiday:   ['HOLIDAY','cat-holiday'],
+  cinematic: ['CINEMATIC','cat-cinematic'],
+  bundle:    ['BUNDLE','cat-bundle'],
+};
+
+function buildCards() {
+  const grid = document.getElementById('grid');
+  const emptyState = document.getElementById('empty-state');
+  
+  PRODUCTS.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.name = p.name.toLowerCase();
+    card.dataset.cat = p.cat;
+    card.dataset.prompt = p.prompt.toLowerCase();
+    
+    const imgUrl = BASE_IMG + p.img;
+    const [catLabel, catClass] = CAT_LABELS[p.cat] || ['OTHER','cat-editorial'];
+    const promptId = 'prompt-' + i;
+    
+    card.innerHTML = `
+      <div class="card-img-wrap">
+        <img src="${imgUrl}" alt="${p.name}" loading="lazy" 
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-img-placeholder" style="display:none">
+          <span>🎨</span><span>Preview</span>
+        </div>
+        <div class="card-price-badge">${p.price}</div>
+        <div class="card-category-badge ${catClass}">${catLabel}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="prompt-toggle" onclick="togglePrompt(this,'${promptId}')">
+          <span class="prompt-toggle-label">Snappic Prompt</span>
+          <span class="prompt-chevron">▾</span>
+        </div>
+        <div class="prompt-content" id="${promptId}">
+          <div class="prompt-text">${p.prompt}</div>
+          <button class="copy-btn" onclick="copyPrompt(this, \`${p.prompt.replace(/`/g,"'")}\`)">Copy Prompt</button>
+        </div>
+      </div>
+      <a class="card-link" href="https://digitalstudiobyryan.com/products/${p.slug}" target="_blank">View on Site →</a>
+    `;
+    
+    grid.insertBefore(card, emptyState);
+  });
+}
+
+function togglePrompt(toggle, id) {
+  toggle.classList.toggle('open');
+  document.getElementById(id).classList.toggle('open');
+}
+
+function copyPrompt(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    showToast();
+    setTimeout(() => {
+      btn.textContent = 'Copy Prompt';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+function applyFilters() {
+  const cards = document.querySelectorAll('.card');
+  let visible = 0;
+  cards.forEach(card => {
+    const matchesCat = currentFilter === 'all' || card.dataset.cat === currentFilter;
+    const matchesSearch = !currentSearch || 
+      card.dataset.name.includes(currentSearch) || 
+      card.dataset.prompt.includes(currentSearch);
+    if (matchesCat && matchesSearch) {
+      card.classList.remove('hidden');
+      visible++;
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+  document.getElementById('result-count').textContent = visible + ' prompt' + (visible !== 1 ? 's' : '');
+  document.getElementById('empty-state').style.display = visible === 0 ? 'block' : 'none';
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    applyFilters();
+  });
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  currentSearch = e.target.value.toLowerCase().trim();
+  applyFilters();
+});
+
+buildCards();
+document.getElementById('total-count').textContent = PRODUCTS.length;
+</script>
+</body>
+</html>
